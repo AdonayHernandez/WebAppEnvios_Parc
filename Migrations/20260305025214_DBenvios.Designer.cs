@@ -12,8 +12,8 @@ using WebAppEnvios.Data;
 namespace WebAppEnvios.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260305013104_AddHistorialEstado")]
-    partial class AddHistorialEstado
+    [Migration("20260305025214_DBenvios")]
+    partial class DBenvios
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,6 +235,10 @@ namespace WebAppEnvios.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"));
 
+                    b.Property<string>("CreadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Direccion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -243,8 +247,18 @@ namespace WebAppEnvios.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ModificadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -283,9 +297,23 @@ namespace WebAppEnvios.Migrations
                     b.Property<int?>("ClienteId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Direccion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModificadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -320,17 +348,31 @@ namespace WebAppEnvios.Migrations
                     b.Property<decimal>("Costo")
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<string>("CreadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<int>("DestinatarioId")
                         .HasColumnType("int");
 
                     b.Property<int>("EstadoId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("FechaEntrega")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("FechaEnvio")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModificadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NumeroSeguimiento")
                         .HasMaxLength(100)
@@ -470,17 +512,31 @@ namespace WebAppEnvios.Migrations
                     b.Property<decimal>("Comision")
                         .HasColumnType("decimal(5,2)");
 
+                    b.Property<string>("CreadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<int>("EnvioId")
                         .HasColumnType("int");
 
                     b.Property<int>("Estado")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("FechaPago")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Metodo")
                         .HasColumnType("int");
+
+                    b.Property<string>("ModificadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<decimal>("Monto")
                         .HasColumnType("decimal(10,2)");
@@ -544,6 +600,10 @@ namespace WebAppEnvios.Migrations
                     b.Property<bool>("Activa")
                         .HasColumnType("bit");
 
+                    b.Property<string>("CreadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Departamento")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -553,6 +613,16 @@ namespace WebAppEnvios.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModificadoPor")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -575,6 +645,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "San Salvador",
                             Direccion = "Centro Histórico, San Salvador",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(406),
                             Nombre = "SmallBox San Salvador Central",
                             Telefono = "2222-0001"
                         },
@@ -584,6 +655,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Santa Ana",
                             Direccion = "4a Calle Ote, Santa Ana",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(420),
                             Nombre = "SmallBox Santa Ana",
                             Telefono = "2222-0002"
                         },
@@ -593,6 +665,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "San Miguel",
                             Direccion = "Av. Roosevelt, San Miguel",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(421),
                             Nombre = "SmallBox San Miguel",
                             Telefono = "2222-0003"
                         },
@@ -602,6 +675,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "La Libertad",
                             Direccion = "Calle Melchor Velásquez, Nueva San Salvador",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(422),
                             Nombre = "SmallBox La Libertad",
                             Telefono = "2222-0004"
                         },
@@ -611,6 +685,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Sonsonate",
                             Direccion = "Av. Morán, Sonsonate",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(423),
                             Nombre = "SmallBox Sonsonate",
                             Telefono = "2222-0005"
                         },
@@ -620,6 +695,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Usulután",
                             Direccion = "1a Av. Sur, Usulután",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(424),
                             Nombre = "SmallBox Usulután",
                             Telefono = "2222-0006"
                         },
@@ -629,6 +705,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Chalatenango",
                             Direccion = "Calle Principal, Chalatenango",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(425),
                             Nombre = "SmallBox Chalatenango",
                             Telefono = "2222-0007"
                         },
@@ -638,6 +715,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Cuscatlán",
                             Direccion = "Coja, Suchitoto",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(425),
                             Nombre = "SmallBox Cuscatlán",
                             Telefono = "2222-0008"
                         },
@@ -647,6 +725,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "La Paz",
                             Direccion = "Centro, Zacatecoluca",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(426),
                             Nombre = "SmallBox La Paz",
                             Telefono = "2222-0009"
                         },
@@ -656,6 +735,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Cabañas",
                             Direccion = "Sensuntepeque Centro",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(427),
                             Nombre = "SmallBox Cabañas",
                             Telefono = "2222-0010"
                         },
@@ -665,6 +745,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "San Vicente",
                             Direccion = "Parque Central, San Vicente",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(428),
                             Nombre = "SmallBox San Vicente",
                             Telefono = "2222-0011"
                         },
@@ -674,6 +755,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Ahuachapán",
                             Direccion = "2a Av. Norte, Ahuachapán",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(429),
                             Nombre = "SmallBox Ahuachapán",
                             Telefono = "2222-0012"
                         },
@@ -683,6 +765,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "Morazán",
                             Direccion = "San Francisco Gotera Centro",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(429),
                             Nombre = "SmallBox Morazán",
                             Telefono = "2222-0013"
                         },
@@ -692,6 +775,7 @@ namespace WebAppEnvios.Migrations
                             Activa = true,
                             Departamento = "La Unión",
                             Direccion = "Puerto, La Unión",
+                            FechaCreacion = new DateTime(2026, 3, 4, 20, 52, 13, 729, DateTimeKind.Local).AddTicks(430),
                             Nombre = "SmallBox La Unión",
                             Telefono = "2222-0014"
                         });

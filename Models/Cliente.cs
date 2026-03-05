@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace WebAppEnvios.Models
 {
-    public class Cliente
+    public class Cliente : AuditableEntity
     {
         [Key]
         public int ClienteId { get; set; }

@@ -5,6 +5,7 @@ using WebAppEnvios.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor(); // necesario para auditoría
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -21,6 +22,11 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    // ✅ Aplicar automáticamente todas las migraciones pendientes al iniciar
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+
+    // Crear roles si no existen
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var roles = new[] { "Administrador", "Cliente" };
     foreach (var role in roles)

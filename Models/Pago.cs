@@ -19,7 +19,7 @@ namespace WebAppEnvios.Models
         TarjetaDebito
     }
 
-    public class Pago
+    public class Pago : AuditableEntity
     {
         [Key]
         public int PagoId { get; set; }

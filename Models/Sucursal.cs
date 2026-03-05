@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace WebAppEnvios.Models
 {
-    public class Sucursal
+    public class Sucursal : AuditableEntity
     {
         [Key]
         public int SucursalId { get; set; }

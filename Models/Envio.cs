@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAppEnvios.Models
 {
-    public class Envio
+    public class Envio : AuditableEntity
     {
         [Key]
         public int EnvioId { get; set; }

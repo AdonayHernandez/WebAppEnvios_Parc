@@ -1,0 +1,254 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Crear Cuenta — SmallBox";
+}
+
+<div class="sb-register-wrapper">
+    <div class="sb-register-card">
+
+        <!-- Header -->
+        <div class="sb-register-header">
+            <div class="sb-brand-icon">📦</div>
+            <h1 class="sb-register-title">Crear Cuenta</h1>
+            <p class="sb-register-subtitle">Únete al sistema de envíos SmallBox El Salvador</p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="sb-register-body">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+
+                <div class="sb-form-group">
+                    <label asp-for="Input.Email" class="sb-label">📧 Correo Electrónico</label>
+                    <input asp-for="Input.Email"
+                           class="sb-input"
+                           autocomplete="username"
+                           placeholder="tu@correo.com" />
+                    <span asp-validation-for="Input.Email" class="sb-error"></span>
+                </div>
+
+                <div class="sb-form-group">
+                    <label asp-for="Input.Password" class="sb-label">🔒 Contraseña</label>
+                    <input asp-for="Input.Password"
+                           class="sb-input"
+                           type="password"
+                           autocomplete="new-password"
+                           placeholder="Mínimo 6 caracteres" />
+                    <span asp-validation-for="Input.Password" class="sb-error"></span>
+                </div>
+
+                <div class="sb-form-group">
+                    <label asp-for="Input.ConfirmPassword" class="sb-label">🔒 Confirmar Contraseña</label>
+                    <input asp-for="Input.ConfirmPassword"
+                           class="sb-input"
+                           type="password"
+                           autocomplete="new-password"
+                           placeholder="Repite tu contraseña" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="sb-error"></span>
+                </div>
+
+                <!-- Sección Admin (colapsable) -->
+                <div class="sb-admin-toggle">
+                    <button type="button" class="sb-toggle-btn" onclick="toggleAdminSection()">
+                        🛡️ ¿Eres administrador? Ingresa tu clave de acceso
+                        <span id="toggleArrow">▼</span>
+                    </button>
+                    <div id="adminSection" class="sb-admin-section" style="display:none">
+                        <div class="sb-admin-note">
+                            ⚠️ Solo si tienes la clave proporcionada por SmallBox. Los registros sin clave serán creados como clientes.
+                        </div>
+                        <div class="sb-form-group">
+                            <label asp-for="Input.ClaveAdmin" class="sb-label">🔑 Clave de Acceso Administrativo</label>
+                            <input asp-for="Input.ClaveAdmin"
+                                   class="sb-input"
+                                   type="password"
+                                   placeholder="Clave secreta de administrador" />
+                            <span asp-validation-for="Input.ClaveAdmin" class="sb-error"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="registerSubmit" type="submit" class="sb-btn-register">
+                    Crear Cuenta
+                </button>
+
+                <div class="sb-login-link">
+                    ¿Ya tienes cuenta? <a asp-page="./Login">Inicia sesión aquí</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sb-register-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
+    .sb-register-card {
+        background: white;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        overflow: hidden;
+        border: 1px solid #E5E7EB;
+    }
+
+    .sb-register-header {
+        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        color: white;
+        padding: 2rem 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .sb-brand-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .sb-register-title {
+        color: white !important;
+        -webkit-text-fill-color: white;
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .sb-register-subtitle {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .sb-register-body {
+        padding: 2rem;
+    }
+
+    .sb-form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .sb-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #374151;
+        margin-bottom: 0.4rem;
+    }
+
+    .sb-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #E5E7EB;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background: #FAFAFA;
+        color: #1F2937;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .sb-input:focus {
+        border-color: #4F46E5;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(79,70,229,0.1);
+    }
+
+    .sb-error {
+        color: #EF4444;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .sb-admin-toggle {
+        margin-bottom: 1.5rem;
+    }
+
+    .sb-toggle-btn {
+        background: none;
+        border: 2px dashed #D1D5DB;
+        border-radius: 10px;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        color: #6B7280;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sb-toggle-btn:hover {
+        border-color: #7C3AED;
+        color: #7C3AED;
+        background: #F5F3FF;
+    }
+
+    .sb-admin-section {
+        border: 2px solid #EDE9FE;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        background: #FAF9FF;
+    }
+
+    .sb-admin-note {
+        background: #FEF3C7;
+        border-left: 4px solid #F59E0B;
+        padding: 0.6rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: #92400E;
+        margin-bottom: 1rem;
+    }
+
+    .sb-btn-register {
+        width: 100%;
+        padding: 0.85rem;
+        background: linear-gradient(135deg, #4F46E5, #7C3AED);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(79,70,229,0.3);
+        margin-bottom: 1rem;
+    }
+
+    .sb-btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(79,70,229,0.45);
+    }
+
+    .sb-login-link {
+        text-align: center;
+        font-size: 0.875rem;
+        color: #6B7280;
+    }
+</style>
+
+<script>
+    function toggleAdminSection() {
+        const section = document.getElementById('adminSection');
+        const arrow   = document.getElementById('toggleArrow');
+        const visible = section.style.display !== 'none';
+        section.style.display = visible ? 'none' : 'block';
+        arrow.textContent = visible ? '▼' : '▲';
+    }
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

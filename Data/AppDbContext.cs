@@ -1,14 +1,22 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using WebAppEnvios.Models;
 
 namespace WebAppEnvios.Data
 {
     public class AppDbContext : IdentityDbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public DbSet<Cliente> Clientes { get; set; }
@@ -98,6 +106,33 @@ namespace WebAppEnvios.Data
                 new Sucursal { SucursalId = 13, Nombre = "SmallBox Morazán",              Departamento = "Morazán",            Direccion = "San Francisco Gotera Centro",          Telefono = "2222-0013", Activa = true },
                 new Sucursal { SucursalId = 14, Nombre = "SmallBox La Unión",             Departamento = "La Unión",           Direccion = "Puerto, La Unión",                     Telefono = "2222-0014", Activa = true }
             );
+        }
+
+        // ─── Auditoría automática ─────────────────────────────────────────────
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var usuario = _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Sistema";
+            var ahora   = DateTime.Now;
+
+            foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.FechaCreacion = ahora;
+                    entry.Entity.CreadoPor     = usuario;
+                }
+
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.FechaModificacion = ahora;
+                    entry.Entity.ModificadoPor     = usuario;
+                    // No sobreescribir FechaCreacion ni CreadoPor en modificaciones
+                    entry.Property(e => e.FechaCreacion).IsModified = false;
+                    entry.Property(e => e.CreadoPor).IsModified      = false;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
