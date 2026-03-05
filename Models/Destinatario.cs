@@ -1,12 +1,11 @@
-﻿namespace WebAppEnvios.Models
-{
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-    namespace WebAppEnvios.Models
+namespace WebAppEnvios.Models
+{
+    public class Destinatario
     {
-        public class Destinatario
-        {
             [Key]
             public int DestinatarioId { get; set; }
 
@@ -18,8 +17,12 @@
             public string Ciudad { get; set; }
             public string Pais { get; set; }
 
+            // Dueño de la dirección
+            public int? ClienteId { get; set; }
+            [ForeignKey("ClienteId")]
+            public Cliente? Cliente { get; set; }
+
             // Relación
-            public ICollection<Envio> Envios { get; set; }
-        }
+            public ICollection<Envio>? Envios { get; set; }
     }
 }

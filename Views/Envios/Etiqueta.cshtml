@@ -1,0 +1,214 @@
+@model WebAppEnvios.Models.Envio
+@{
+    ViewData["Title"] = $"Etiqueta - {Model.NumeroSeguimiento}";
+    Layout = null; // Sin layout para impresión limpia
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <title>Etiqueta SmallBox - @Model.NumeroSeguimiento</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+
+        .page-actions {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn-print, .btn-back {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-print { background: #4F46E5; color: white; }
+        .btn-back  { background: #6B7280; color: white; text-decoration: none; display: inline-block; }
+
+        .etiqueta {
+            background: white;
+            width: 10cm;
+            min-height: 15cm;
+            border: 2.5px solid #1F2937;
+            border-radius: 4px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .header {
+            background: #1F2937;
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand { font-size: 20px; font-weight: 900; letter-spacing: -0.5px; }
+        .brand span { color: #10B981; }
+        .fecha { font-size: 10px; opacity: 0.8; text-align: right; }
+
+        .tracking {
+            background: #F3F4F6;
+            border-bottom: 2px dashed #D1D5DB;
+            padding: 10px 15px;
+            text-align: center;
+        }
+
+        .tracking-label { font-size: 9px; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; }
+        .tracking-num { font-size: 16px; font-weight: 900; color: #1F2937; font-family: 'Courier New', monospace; letter-spacing: 2px; }
+
+        .section {
+            padding: 10px 15px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .section-title {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6B7280;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .section-content { font-size: 12px; color: #111827; line-height: 1.4; }
+        .section-name { font-size: 14px; font-weight: bold; color: #1F2937; }
+
+        .arrow-section {
+            padding: 6px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #EFF6FF;
+        }
+
+        .arrow { font-size: 20px; color: #3B82F6; }
+
+        .costo-section {
+            background: #F0FDF4;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px dashed #D1D5DB;
+        }
+
+        .costo-label { font-size: 10px; color: #059669; font-weight: bold; text-transform: uppercase; }
+        .costo-amount { font-size: 18px; font-weight: 900; color: #059669; }
+
+        .footer {
+            padding: 8px 15px;
+            text-align: center;
+            font-size: 9px;
+            color: #9CA3AF;
+            background: #F9FAFB;
+        }
+
+        .barcode-placeholder {
+            background: #1F2937;
+            height: 40px;
+            margin: 8px 15px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 9px;
+            letter-spacing: 4px;
+        }
+
+        @@media print {
+            body { background: white; padding: 0; }
+            .page-actions { display: none; }
+            .etiqueta { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-actions">
+        <a href="javascript:history.back()" class="btn-back">← Volver</a>
+        <button onclick="window.print()" class="btn-print">🖨️ Imprimir Etiqueta</button>
+    </div>
+
+    <div class="etiqueta">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">Small<span>Box</span></div>
+            <div class="fecha">
+                <div>El Salvador</div>
+                <div>@Model.FechaEnvio.ToString("dd/MM/yyyy")</div>
+            </div>
+        </div>
+
+        <!-- Tracking -->
+        <div class="tracking">
+            <div class="tracking-label">Número de Seguimiento</div>
+            <div class="tracking-num">@(Model.NumeroSeguimiento ?? $"SB-{Model.EnvioId}")</div>
+        </div>
+
+        <!-- Origen -->
+        <div class="section">
+            <div class="section-title">📤 Remitente</div>
+            <div class="section-name">@Model.Cliente?.Nombre</div>
+            <div class="section-content">
+                @Model.Cliente?.Telefono<br>
+                @(Model.Sucursal != null ? $"Sucursal: {Model.Sucursal.Nombre}" : "")
+                @(Model.Sucursal != null ? $" — {Model.Sucursal.Departamento}" : "")
+            </div>
+        </div>
+
+        <div class="arrow-section">
+            <span class="arrow">↓</span>
+        </div>
+
+        <!-- Destino -->
+        <div class="section" style="background:#FFF7ED; border-left: 4px solid #F97316;">
+            <div class="section-title">📥 Destinatario</div>
+            <div class="section-name">@Model.Destinatario?.Nombre</div>
+            <div class="section-content">
+                Tel: @Model.Destinatario?.Telefono<br>
+                @Model.Destinatario?.Direccion<br>
+                @Model.Destinatario?.Ciudad, El Salvador
+            </div>
+        </div>
+
+        <!-- Paquetes -->
+        @if (Model.Paquetes != null && Model.Paquetes.Any())
+        {
+            <div class="section">
+                <div class="section-title">📦 Paquetes (@Model.Paquetes.Count())</div>
+                @foreach (var p in Model.Paquetes)
+                {
+                    <div class="section-content">@p.Tipo — @p.Peso kg @(p.Descripcion != null ? $"— {p.Descripcion}" : "")</div>
+                }
+            </div>
+        }
+
+        <!-- Código de barras simulado -->
+        <div class="barcode-placeholder">|||||||||||||||||||||||||||||||||||||||||||||||</div>
+
+        <!-- Costo -->
+        <div class="costo-section">
+            <div class="costo-label">💵 Costo del Envío</div>
+            <div class="costo-amount">$@Model.Costo.ToString("0.00")</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            SmallBox El Salvador &nbsp;|&nbsp; Sistema de Envíos Nacional<br>
+            @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+        </div>
+    </div>
+</body>
+</html>

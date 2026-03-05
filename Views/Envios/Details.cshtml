@@ -1,0 +1,173 @@
+@model WebAppEnvios.Models.Envio
+@{
+    ViewData["Title"] = $"Envío {Model.NumeroSeguimiento ?? Model.EnvioId.ToString()}";
+    var isPendiente = Model.EstadoEnvio?.NombreEstado == "Pendiente";
+    var badgeClass = Model.EstadoEnvio?.NombreEstado switch
+    {
+        "Pendiente"    => "bg-warning text-dark",
+        "Recolectado"  => "bg-info text-dark",
+        "En Tránsito"  => "bg-primary",
+        "En Sucursal"  => "bg-secondary",
+        "Entregado"    => "bg-success",
+        "Cancelado"    => "bg-danger",
+        "No Entregado" => "bg-dark",
+        _              => "bg-secondary"
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary mb-2">← Mis Envíos</a>
+        <h1 class="mb-0">Detalle del Envío</h1>
+        <code class="fs-5 text-primary">@(Model.NumeroSeguimiento ?? $"SB-{Model.EnvioId}")</code>
+    </div>
+    <div class="d-flex gap-2 align-items-start flex-wrap justify-content-end">
+        <a asp-action="Historial" asp-route-id="@Model.EnvioId" class="btn btn-outline-info">📋 Ver Historial</a>
+        <a asp-action="Etiqueta" asp-route-id="@Model.EnvioId" class="btn btn-outline-secondary">🏷️ Ver Etiqueta</a>
+        @if (User.IsInRole("Administrador") || isPendiente)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.EnvioId" class="btn btn-warning">✏️ Editar</a>
+            <a asp-action="Delete" asp-route-id="@Model.EnvioId" class="btn btn-danger">
+                @(User.IsInRole("Administrador") ? "🗑️ Eliminar" : "❌ Cancelar Envío")
+            </a>
+        }
+        else if (!User.IsInRole("Administrador"))
+        {
+            <span class="badge bg-secondary p-2 fs-6">🔒 Solo lectura — envío en proceso</span>
+        }
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Estado -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body d-flex align-items-center gap-3">
+                <span class="badge rounded-pill @badgeClass fs-6 px-4 py-2">@Model.EstadoEnvio?.NombreEstado</span>
+                <span class="text-muted small">@Model.EstadoEnvio?.Descripcion</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remitente -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent fw-bold">📤 Remitente (Cliente)</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Nombre:</strong> @Model.Cliente?.Nombre</p>
+                <p class="mb-1"><strong>Teléfono:</strong> @Model.Cliente?.Telefono</p>
+                <p class="mb-1"><strong>Email:</strong> @Model.Cliente?.Email</p>
+                <p class="mb-0"><strong>Dirección:</strong> @Model.Cliente?.Direccion</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Destinatario -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent fw-bold">📥 Destinatario</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Nombre:</strong> @Model.Destinatario?.Nombre</p>
+                <p class="mb-1"><strong>Teléfono:</strong> @Model.Destinatario?.Telefono</p>
+                <p class="mb-1"><strong>Ciudad:</strong> @Model.Destinatario?.Ciudad</p>
+                <p class="mb-0"><strong>Dirección:</strong> @Model.Destinatario?.Direccion</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info del envio -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent fw-bold">📦 Información del Envío</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Sucursal Origen:</strong> @(Model.Sucursal?.Nombre ?? "—")</p>
+                <p class="mb-1"><strong>Departamento:</strong> @(Model.Sucursal?.Departamento ?? "—")</p>
+                <p class="mb-1"><strong>Fecha Envío:</strong> @Model.FechaEnvio.ToString("dd/MM/yyyy")</p>
+                <p class="mb-1"><strong>Entrega Estimada:</strong> @(Model.FechaEntrega?.ToString("dd/MM/yyyy") ?? "Por definir")</p>
+                <p class="mb-0"><strong>Observaciones:</strong> @(Model.Observaciones ?? "—")</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Costo y Pago -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-transparent fw-bold">💰 Costo y Pago</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Costo del Envío:</strong> <span class="text-success fw-bold">$@Model.Costo.ToString("0.00")</span></p>
+                @if (Model.Pagos != null && Model.Pagos.Any())
+                {
+                    foreach (var pago in Model.Pagos)
+                    {
+                        var pagoEstado = pago.Estado == EstadoPago.Pagado ? "badge bg-success" : pago.Estado == EstadoPago.Anulado ? "badge bg-danger" : "badge bg-warning text-dark";
+                        <div class="border rounded p-2 mb-2">
+                            <span class="@pagoEstado me-2">@pago.Estado</span>
+                            <strong>$@pago.Monto.ToString("0.00")</strong> — @pago.Metodo
+                            @if (pago.FechaPago.HasValue)
+                            {
+                                <small class="text-muted ms-2">@pago.FechaPago.Value.ToString("dd/MM/yyyy")</small>
+                            }
+                            <br><small class="text-muted">Comisión: @pago.Comision%  ($@pago.MontoComision.ToString("0.00"))</small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Sin pagos registrados.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Paquetes -->
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <span class="fw-bold">📦 Paquetes (@(Model.Paquetes?.Count() ?? 0))</span>
+                <a asp-controller="Paquetes" asp-action="Create" asp-route-envioId="@Model.EnvioId" class="btn btn-sm btn-outline-primary">+ Agregar Paquete</a>
+            </div>
+            <div class="card-body">
+                @if (Model.Paquetes == null || !Model.Paquetes.Any())
+                {
+                    <p class="text-muted mb-0">No hay paquetes registrados para este envío.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Peso (kg)</th>
+                                    <th>Dimensiones (cm)</th>
+                                    <th>Descripción</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.Paquetes)
+                                {
+                                    <tr>
+                                        <td><span class="badge bg-light text-dark border">@p.Tipo</span></td>
+                                        <td>@p.Peso kg</td>
+                                        <td>
+                                            @if (p.Largo.HasValue)
+                                            { <span>@p.Largo×@p.Ancho×@p.Alto</span> }
+                                            else
+                                            { <span class="text-muted">—</span> }
+                                        </td>
+                                        <td>@(p.Descripcion ?? "—")</td>
+                                        <td>
+                                            <a asp-controller="Paquetes" asp-action="Edit" asp-route-id="@p.PaqueteId" class="btn btn-xs btn-sm btn-outline-warning">✏️</a>
+                                            <a asp-controller="Paquetes" asp-action="Delete" asp-route-id="@p.PaqueteId" class="btn btn-xs btn-sm btn-outline-danger">🗑️</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

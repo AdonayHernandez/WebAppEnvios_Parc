@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAppEnvios.Data;
 
@@ -11,9 +12,11 @@ using WebAppEnvios.Data;
 namespace WebAppEnvios.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260303234743_AddClientes")]
+    partial class AddClientes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,7 +318,7 @@ namespace WebAppEnvios.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Costo")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("DestinatarioId")
                         .HasColumnType("int");
@@ -329,17 +332,6 @@ namespace WebAppEnvios.Migrations
                     b.Property<DateTime>("FechaEnvio")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NumeroSeguimiento")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Observaciones")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("SucursalId")
-                        .HasColumnType("int");
-
                     b.HasKey("EnvioId");
 
                     b.HasIndex("ClienteId");
@@ -347,8 +339,6 @@ namespace WebAppEnvios.Migrations
                     b.HasIndex("DestinatarioId");
 
                     b.HasIndex("EstadoId");
-
-                    b.HasIndex("SucursalId");
 
                     b.ToTable("Envios");
                 });
@@ -372,125 +362,6 @@ namespace WebAppEnvios.Migrations
                     b.HasKey("EstadoId");
 
                     b.ToTable("EstadosEnvio");
-
-                    b.HasData(
-                        new
-                        {
-                            EstadoId = 1,
-                            Descripcion = "Orden registrada, en espera de recolección.",
-                            NombreEstado = "Pendiente"
-                        },
-                        new
-                        {
-                            EstadoId = 2,
-                            Descripcion = "Paquete recogido por mensajero.",
-                            NombreEstado = "Recolectado"
-                        },
-                        new
-                        {
-                            EstadoId = 3,
-                            Descripcion = "Paquete en camino a destino.",
-                            NombreEstado = "En Tránsito"
-                        },
-                        new
-                        {
-                            EstadoId = 4,
-                            Descripcion = "Paquete disponible en sucursal destino.",
-                            NombreEstado = "En Sucursal"
-                        },
-                        new
-                        {
-                            EstadoId = 5,
-                            Descripcion = "Paquete entregado al destinatario.",
-                            NombreEstado = "Entregado"
-                        },
-                        new
-                        {
-                            EstadoId = 6,
-                            Descripcion = "Envío cancelado por el cliente.",
-                            NombreEstado = "Cancelado"
-                        },
-                        new
-                        {
-                            EstadoId = 7,
-                            Descripcion = "Intento de entrega fallido.",
-                            NombreEstado = "No Entregado"
-                        });
-                });
-
-            modelBuilder.Entity("WebAppEnvios.Models.HistorialEstado", b =>
-                {
-                    b.Property<int>("HistorialId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistorialId"));
-
-                    b.Property<string>("CambiadoPor")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("EnvioId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EstadoAnterior")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("EstadoNuevo")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("FechaCambio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Observaciones")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("HistorialId");
-
-                    b.HasIndex("EnvioId");
-
-                    b.ToTable("HistorialEstados");
-                });
-
-            modelBuilder.Entity("WebAppEnvios.Models.Pago", b =>
-                {
-                    b.Property<int>("PagoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PagoId"));
-
-                    b.Property<decimal>("Comision")
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<int>("EnvioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("FechaPago")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Metodo")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Monto")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<string>("Observaciones")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("PagoId");
-
-                    b.HasIndex("EnvioId");
-
-                    b.ToTable("Pagos");
                 });
 
             modelBuilder.Entity("WebAppEnvios.Models.Paquete", b =>
@@ -501,197 +372,17 @@ namespace WebAppEnvios.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaqueteId"));
 
-                    b.Property<decimal?>("Alto")
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<decimal?>("Ancho")
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<string>("Descripcion")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
                     b.Property<int>("EnvioId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Largo")
-                        .HasColumnType("decimal(8,2)");
-
                     b.Property<decimal>("Peso")
-                        .HasColumnType("decimal(8,2)");
-
-                    b.Property<int>("Tipo")
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("PaqueteId");
 
                     b.HasIndex("EnvioId");
 
                     b.ToTable("Paquetes");
-                });
-
-            modelBuilder.Entity("WebAppEnvios.Models.Sucursal", b =>
-                {
-                    b.Property<int>("SucursalId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SucursalId"));
-
-                    b.Property<bool>("Activa")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Departamento")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("SucursalId");
-
-                    b.ToTable("Sucursales");
-
-                    b.HasData(
-                        new
-                        {
-                            SucursalId = 1,
-                            Activa = true,
-                            Departamento = "San Salvador",
-                            Direccion = "Centro Histórico, San Salvador",
-                            Nombre = "SmallBox San Salvador Central",
-                            Telefono = "2222-0001"
-                        },
-                        new
-                        {
-                            SucursalId = 2,
-                            Activa = true,
-                            Departamento = "Santa Ana",
-                            Direccion = "4a Calle Ote, Santa Ana",
-                            Nombre = "SmallBox Santa Ana",
-                            Telefono = "2222-0002"
-                        },
-                        new
-                        {
-                            SucursalId = 3,
-                            Activa = true,
-                            Departamento = "San Miguel",
-                            Direccion = "Av. Roosevelt, San Miguel",
-                            Nombre = "SmallBox San Miguel",
-                            Telefono = "2222-0003"
-                        },
-                        new
-                        {
-                            SucursalId = 4,
-                            Activa = true,
-                            Departamento = "La Libertad",
-                            Direccion = "Calle Melchor Velásquez, Nueva San Salvador",
-                            Nombre = "SmallBox La Libertad",
-                            Telefono = "2222-0004"
-                        },
-                        new
-                        {
-                            SucursalId = 5,
-                            Activa = true,
-                            Departamento = "Sonsonate",
-                            Direccion = "Av. Morán, Sonsonate",
-                            Nombre = "SmallBox Sonsonate",
-                            Telefono = "2222-0005"
-                        },
-                        new
-                        {
-                            SucursalId = 6,
-                            Activa = true,
-                            Departamento = "Usulután",
-                            Direccion = "1a Av. Sur, Usulután",
-                            Nombre = "SmallBox Usulután",
-                            Telefono = "2222-0006"
-                        },
-                        new
-                        {
-                            SucursalId = 7,
-                            Activa = true,
-                            Departamento = "Chalatenango",
-                            Direccion = "Calle Principal, Chalatenango",
-                            Nombre = "SmallBox Chalatenango",
-                            Telefono = "2222-0007"
-                        },
-                        new
-                        {
-                            SucursalId = 8,
-                            Activa = true,
-                            Departamento = "Cuscatlán",
-                            Direccion = "Coja, Suchitoto",
-                            Nombre = "SmallBox Cuscatlán",
-                            Telefono = "2222-0008"
-                        },
-                        new
-                        {
-                            SucursalId = 9,
-                            Activa = true,
-                            Departamento = "La Paz",
-                            Direccion = "Centro, Zacatecoluca",
-                            Nombre = "SmallBox La Paz",
-                            Telefono = "2222-0009"
-                        },
-                        new
-                        {
-                            SucursalId = 10,
-                            Activa = true,
-                            Departamento = "Cabañas",
-                            Direccion = "Sensuntepeque Centro",
-                            Nombre = "SmallBox Cabañas",
-                            Telefono = "2222-0010"
-                        },
-                        new
-                        {
-                            SucursalId = 11,
-                            Activa = true,
-                            Departamento = "San Vicente",
-                            Direccion = "Parque Central, San Vicente",
-                            Nombre = "SmallBox San Vicente",
-                            Telefono = "2222-0011"
-                        },
-                        new
-                        {
-                            SucursalId = 12,
-                            Activa = true,
-                            Departamento = "Ahuachapán",
-                            Direccion = "2a Av. Norte, Ahuachapán",
-                            Nombre = "SmallBox Ahuachapán",
-                            Telefono = "2222-0012"
-                        },
-                        new
-                        {
-                            SucursalId = 13,
-                            Activa = true,
-                            Departamento = "Morazán",
-                            Direccion = "San Francisco Gotera Centro",
-                            Nombre = "SmallBox Morazán",
-                            Telefono = "2222-0013"
-                        },
-                        new
-                        {
-                            SucursalId = 14,
-                            Activa = true,
-                            Departamento = "La Unión",
-                            Direccion = "Puerto, La Unión",
-                            Nombre = "SmallBox La Unión",
-                            Telefono = "2222-0014"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -783,40 +474,11 @@ namespace WebAppEnvios.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WebAppEnvios.Models.Sucursal", "Sucursal")
-                        .WithMany("Envios")
-                        .HasForeignKey("SucursalId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Cliente");
 
                     b.Navigation("Destinatario");
 
                     b.Navigation("EstadoEnvio");
-
-                    b.Navigation("Sucursal");
-                });
-
-            modelBuilder.Entity("WebAppEnvios.Models.HistorialEstado", b =>
-                {
-                    b.HasOne("WebAppEnvios.Models.Envio", "Envio")
-                        .WithMany("HistorialEstados")
-                        .HasForeignKey("EnvioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Envio");
-                });
-
-            modelBuilder.Entity("WebAppEnvios.Models.Pago", b =>
-                {
-                    b.HasOne("WebAppEnvios.Models.Envio", "Envio")
-                        .WithMany("Pagos")
-                        .HasForeignKey("EnvioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Envio");
                 });
 
             modelBuilder.Entity("WebAppEnvios.Models.Paquete", b =>
@@ -844,19 +506,10 @@ namespace WebAppEnvios.Migrations
 
             modelBuilder.Entity("WebAppEnvios.Models.Envio", b =>
                 {
-                    b.Navigation("HistorialEstados");
-
-                    b.Navigation("Pagos");
-
                     b.Navigation("Paquetes");
                 });
 
             modelBuilder.Entity("WebAppEnvios.Models.EstadoEnvio", b =>
-                {
-                    b.Navigation("Envios");
-                });
-
-            modelBuilder.Entity("WebAppEnvios.Models.Sucursal", b =>
                 {
                     b.Navigation("Envios");
                 });

@@ -1,0 +1,76 @@
+@model WebAppEnvios.Models.Destinatario
+
+@{
+    ViewData["Title"] = "Nuevo Destinatario";
+}
+
+<div class="row align-items-center mb-4">
+    <div class="col">
+        <h1 class="mb-0">Añadir Destinatario <span class="text-muted">| Libreta de Direcciones</span></h1>
+    </div>
+    <div class="col-auto">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            ← Volver a la Lista
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <form asp-action="Create" class="needs-validation">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            
+            <div class="row">
+                <div class="col-md-6 form-group mb-4">
+                    <label asp-for="Nombre" class="control-label fw-bold mb-2">Nombre Completo</label>
+                    <input asp-for="Nombre" class="form-control form-control-lg" placeholder="Ej. Juan Pérez" />
+                    <span asp-validation-for="Nombre" class="text-danger mt-1 d-block small"></span>
+                </div>
+                
+                <div class="col-md-6 form-group mb-4">
+                    <label asp-for="Telefono" class="control-label fw-bold mb-2">Teléfono de Contacto</label>
+                    <input asp-for="Telefono" class="form-control form-control-lg" placeholder="Ej. +503 7000-0000" />
+                    <span asp-validation-for="Telefono" class="text-danger mt-1 d-block small"></span>
+                </div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="Direccion" class="control-label fw-bold mb-2">Dirección Exacta</label>
+                <input asp-for="Direccion" class="form-control form-control-lg" placeholder="Avenida, Calle, Casa..." />
+                <span asp-validation-for="Direccion" class="text-danger mt-1 d-block small"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group mb-4">
+                    <label asp-for="Ciudad" class="control-label fw-bold mb-2">Ciudad / Municipio</label>
+                    <input asp-for="Ciudad" class="form-control form-control-lg" placeholder="Ej. Santa Ana" />
+                    <span asp-validation-for="Ciudad" class="text-danger mt-1 d-block small"></span>
+                </div>
+                
+                <div class="col-md-6 form-group mb-4">
+                    <label asp-for="Pais" class="control-label fw-bold mb-2">País</label>
+                    <input asp-for="Pais" class="form-control form-control-lg" value="El Salvador" />
+                    <span asp-validation-for="Pais" class="text-danger mt-1 d-block small"></span>
+                </div>
+            </div>
+
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-person-plus"></i> Guardar Destinatario
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="col-md-5 d-none d-md-flex">
+        <div class="text-center p-5 ms-md-4 w-100" style="background: rgba(16, 185, 129, 0.05); border-radius: 20px; border: 1px dashed rgba(16, 185, 129, 0.2);">
+            <div class="mb-4" style="font-size: 4rem; color: var(--secondary);">📍</div>
+            <h3 class="fw-bold mb-3" style="color: var(--secondary);">Libreta de Contactos</h3>
+            <p class="text-muted">Asegúrate de ingresar la dirección exacta y un número de teléfono válido para evitar contratiempos en el momento de la entrega de tus paquetes.</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

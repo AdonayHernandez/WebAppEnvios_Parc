@@ -1,8 +1,538 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    ViewData["Title"] = "SmallBox - Panel Principal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to perritho</h1>
-    <p>Lea aqui <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (!SignInManager.IsSignedIn(User))
+{
+    <!-- ===================== LANDING: SIN SESION ===================== -->
+    <div class="sb-landing">
+        <div class="sb-hero">
+            <div class="sb-hero-icon">📦</div>
+            <h1 class="sb-hero-title">SmallBox</h1>
+            <p class="sb-hero-subtitle">Sistema de Gestión de Envíos a Nivel Nacional</p>
+            <p class="sb-hero-desc">Gestiona tus envíos, destinatarios y paquetes desde cualquier punto del país.<br>Elige cómo deseas ingresar.</p>
+        </div>
+
+        <div class="sb-role-grid">
+            <!-- Tarjeta Administrador -->
+            <div class="sb-role-card sb-admin-card">
+                <div class="sb-role-icon">🛡️</div>
+                <h2 class="sb-role-title">Administrador</h2>
+                <ul class="sb-role-features">
+                    <li>✔ Control total del sistema</li>
+                    <li>✔ Ver todos los envíos del país</li>
+                    <li>✔ Gestionar clientes y destinatarios</li>
+                    <li>✔ Cambiar estados de envíos</li>
+                    <li>✔ Acceso a todos los paquetes</li>
+                </ul>
+                <a class="sb-btn sb-btn-admin" asp-area="Identity" asp-page="/Account/Login">
+                    Ingresar como Administrador
+                </a>
+            </div>
+
+            <!-- Tarjeta Cliente -->
+            <div class="sb-role-card sb-client-card">
+                <div class="sb-role-icon">👤</div>
+                <h2 class="sb-role-title">Cliente</h2>
+                <ul class="sb-role-features">
+                    <li>✔ Crear y gestionar destinatarios</li>
+                    <li>✔ Generar órdenes de envío</li>
+                    <li>✔ Ver estado de mis envíos</li>
+                    <li>✔ Editar envíos antes de recolección</li>
+                    <li>✔ Cancelar envíos pendientes</li>
+                </ul>
+                <div class="sb-role-actions">
+                    <a class="sb-btn sb-btn-client" asp-area="Identity" asp-page="/Account/Login">
+                        Iniciar Sesión
+                    </a>
+                    <a class="sb-btn sb-btn-register" asp-area="Identity" asp-page="/Account/Register">
+                        Registrarme
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <p class="sb-footer-note">¿Nuevo en SmallBox? <a asp-area="Identity" asp-page="/Account/Register">Crea tu cuenta de cliente aquí</a></p>
+    </div>
+}
+else if (User.IsInRole("Administrador"))
+{
+    <!-- ===================== PANEL: ADMINISTRADOR ===================== -->
+    <div class="sb-dashboard">
+        <div class="sb-dash-header sb-admin-header">
+            <div>
+                <div class="sb-role-badge sb-badge-admin">🛡️ Administrador</div>
+                <h1 class="sb-dash-title">Panel de Administración</h1>
+                <p class="sb-dash-subtitle">Bienvenido, @User.Identity?.Name. Tienes control total del sistema.</p>
+            </div>
+        </div>
+
+        <div class="sb-stats-grid">
+            <a class="sb-stat-card" asp-controller="Envios" asp-action="Index">
+                <span class="sb-stat-icon">📬</span>
+                <span class="sb-stat-label">Todos los Envíos</span>
+                <span class="sb-stat-desc">Ver y gestionar envíos</span>
+            </a>
+            <a class="sb-stat-card" asp-controller="Destinatarios" asp-action="Index">
+                <span class="sb-stat-icon">📋</span>
+                <span class="sb-stat-label">Destinatarios</span>
+                <span class="sb-stat-desc">Ver todos los registrados</span>
+            </a>
+            <a class="sb-stat-card" asp-controller="Paquetes" asp-action="Index">
+                <span class="sb-stat-icon">📦</span>
+                <span class="sb-stat-label">Todos los Paquetes</span>
+                <span class="sb-stat-desc">Consultar y gestionar</span>
+            </a>
+            <a class="sb-stat-card sb-stat-create" asp-controller="Envios" asp-action="Create">
+                <span class="sb-stat-icon">➕</span>
+                <span class="sb-stat-label">Crear Envío</span>
+                <span class="sb-stat-desc">Registrar nuevo envío</span>
+            </a>
+        </div>
+
+        <div class="sb-info-box sb-info-admin">
+            <h4>🛡️ Permisos de Administrador</h4>
+            <p>Como administrador puedes ver, editar y eliminar <strong>cualquier dato del sistema</strong>, incluyendo envíos de todos los clientes, destinatarios registrados y paquetes en tránsito. También puedes cambiar el estado de los envíos en cualquier momento.</p>
+        </div>
+    </div>
+}
+else
+{
+    <!-- ===================== PANEL: CLIENTE ===================== -->
+    <div class="sb-dashboard">
+        <div class="sb-dash-header sb-client-header">
+            <div>
+                <div class="sb-role-badge sb-badge-client">👤 Cliente</div>
+                <h1 class="sb-dash-title">¡Bienvenido a SmallBox!</h1>
+                <p class="sb-dash-subtitle">Hola, @User.Identity?.Name. Gestiona tus envíos desde aquí.</p>
+            </div>
+        </div>
+
+        <div class="sb-stats-grid">
+            <a class="sb-stat-card sb-stat-create" asp-controller="Envios" asp-action="Create">
+                <span class="sb-stat-icon">🚀</span>
+                <span class="sb-stat-label">Nuevo Envío</span>
+                <span class="sb-stat-desc">Crear una orden de envío</span>
+            </a>
+            <a class="sb-stat-card" asp-controller="Envios" asp-action="Index">
+                <span class="sb-stat-icon">📬</span>
+                <span class="sb-stat-label">Mis Envíos</span>
+                <span class="sb-stat-desc">Ver estado de mis pedidos</span>
+            </a>
+            <a class="sb-stat-card" asp-controller="Destinatarios" asp-action="Index">
+                <span class="sb-stat-icon">📋</span>
+                <span class="sb-stat-label">Mis Destinatarios</span>
+                <span class="sb-stat-desc">Gestionar mis contactos</span>
+            </a>
+            <a class="sb-stat-card" asp-controller="Destinatarios" asp-action="Create">
+                <span class="sb-stat-icon">➕</span>
+                <span class="sb-stat-label">Nuevo Destinatario</span>
+                <span class="sb-stat-desc">Agregar contacto de entrega</span>
+            </a>
+        </div>
+
+        <div class="sb-info-box sb-info-client">
+            <h4>📌 ¿Cómo funciona?</h4>
+            <ul class="sb-how-list">
+                <li><span class="sb-step">1</span> Agrega un <strong>destinatario</strong> con su nombre, teléfono y dirección.</li>
+                <li><span class="sb-step">2</span> Crea una <strong>orden de envío</strong> seleccionando el destinatario y la fecha.</li>
+                <li><span class="sb-step">3</span> Puedes <strong>editar o cancelar</strong> tu envío mientras esté en estado "Pendiente".</li>
+                <li><span class="sb-step">4</span> Una vez recolectado, solo podrás <strong>consultar el estado</strong> de tu paquete.</li>
+            </ul>
+        </div>
+    </div>
+}
+
+<style>
+    /* ==================== LANDING ==================== */
+    .sb-landing {
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .sb-hero {
+        padding: 2rem 1rem 3rem;
+    }
+
+    .sb-hero-icon {
+        font-size: 4rem;
+        line-height: 1;
+        margin-bottom: 1rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .sb-hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #4F46E5, #10B981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .sb-hero-subtitle {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.75rem;
+    }
+
+    .sb-hero-desc {
+        color: #6B7280;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    .sb-role-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    @@media (max-width: 640px) {
+        .sb-role-grid { grid-template-columns: 1fr; }
+        .sb-hero-title { font-size: 2.2rem; }
+    }
+
+    .sb-role-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: left;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sb-role-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .sb-admin-card {
+        border-color: #EDE9FE;
+        background: linear-gradient(145deg, #ffffff, #F5F3FF);
+    }
+
+    .sb-admin-card:hover {
+        border-color: #7C3AED;
+    }
+
+    .sb-client-card {
+        border-color: #D1FAE5;
+        background: linear-gradient(145deg, #ffffff, #F0FDF4);
+    }
+
+    .sb-client-card:hover {
+        border-color: #059669;
+    }
+
+    .sb-role-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .sb-role-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+        color: #1F2937;
+    }
+
+    .sb-role-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem;
+        space-y: 0.5rem;
+    }
+
+    .sb-role-features li {
+        padding: 0.4rem 0;
+        color: #374151;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .sb-role-features li:last-child {
+        border-bottom: none;
+    }
+
+    .sb-role-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .sb-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none !important;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .sb-btn-admin {
+        background: linear-gradient(135deg, #7C3AED, #4F46E5);
+        color: white !important;
+        -webkit-text-fill-color: white;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+
+    .sb-btn-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+    }
+
+    .sb-btn-client {
+        background: linear-gradient(135deg, #059669, #10B981);
+        color: white !important;
+        -webkit-text-fill-color: white;
+        flex: 1;
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+    }
+
+    .sb-btn-client:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(5, 150, 105, 0.5);
+    }
+
+    .sb-btn-register {
+        background: white;
+        color: #059669 !important;
+        border: 2px solid #10B981;
+        flex: 1;
+        -webkit-text-fill-color: #059669;
+    }
+
+    .sb-btn-register:hover {
+        background: #F0FDF4;
+        transform: translateY(-2px);
+    }
+
+    .sb-footer-note {
+        color: #6B7280;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+
+    /* ==================== DASHBOARD ==================== */
+    .sb-dashboard {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .sb-dash-header {
+        padding: 2rem 2.5rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sb-admin-header {
+        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        color: white;
+        box-shadow: 0 10px 30px rgba(79, 70, 229, 0.35);
+    }
+
+    .sb-client-header {
+        background: linear-gradient(135deg, #059669 0%, #0D9488 100%);
+        color: white;
+        box-shadow: 0 10px 30px rgba(5, 150, 105, 0.35);
+    }
+
+    .sb-dash-header::after {
+        content: '';
+        position: absolute;
+        right: -40px;
+        top: -40px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+
+    .sb-dash-header::before {
+        content: '';
+        position: absolute;
+        right: 60px;
+        bottom: -60px;
+        width: 150px;
+        height: 150px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 50%;
+    }
+
+    .sb-role-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(4px);
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.3rem 0.9rem;
+        border-radius: 999px;
+        margin-bottom: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .sb-dash-title {
+        color: white !important;
+        -webkit-text-fill-color: white;
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+    }
+
+    .sb-dash-subtitle {
+        color: rgba(255,255,255,0.85);
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .sb-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    @@media (max-width: 900px) {
+        .sb-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @@media (max-width: 500px) {
+        .sb-stats-grid { grid-template-columns: 1fr; }
+    }
+
+    .sb-stat-card {
+        background: white;
+        border-radius: 14px;
+        padding: 1.75rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        text-decoration: none !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        border: 2px solid #F1F5F9;
+        transition: all 0.3s ease;
+        gap: 0.5rem;
+        color: #1F2937;
+    }
+
+    .sb-stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        border-color: #4F46E5;
+        color: #4F46E5 !important;
+        -webkit-text-fill-color: #4F46E5;
+    }
+
+    .sb-stat-create:hover {
+        border-color: #10B981;
+        color: #10B981 !important;
+        -webkit-text-fill-color: #10B981;
+    }
+
+    .sb-stat-icon {
+        font-size: 2.2rem;
+        line-height: 1;
+    }
+
+    .sb-stat-label {
+        font-weight: 700;
+        font-size: 1rem;
+        color: inherit;
+    }
+
+    .sb-stat-desc {
+        font-size: 0.8rem;
+        color: #6B7280;
+        font-weight: 400;
+    }
+
+    .sb-info-box {
+        border-radius: 14px;
+        padding: 2rem;
+        border-left: 5px solid;
+    }
+
+    .sb-info-admin {
+        background: #F5F3FF;
+        border-color: #7C3AED;
+    }
+
+    .sb-info-admin h4 {
+        color: #7C3AED;
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+    }
+
+    .sb-info-admin p {
+        color: #374151;
+        margin: 0;
+        line-height: 1.7;
+    }
+
+    .sb-info-client {
+        background: #F0FDF4;
+        border-color: #10B981;
+    }
+
+    .sb-info-client h4 {
+        color: #059669;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .sb-how-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .sb-how-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        color: #374151;
+        line-height: 1.5;
+    }
+
+    .sb-step {
+        background: #10B981;
+        color: white;
+        font-weight: 700;
+        font-size: 0.8rem;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+    }
+</style>

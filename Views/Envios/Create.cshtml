@@ -1,0 +1,105 @@
+@model WebAppEnvios.Models.Envio
+@{
+    ViewData["Title"] = "Crear Nuevo Envío";
+}
+
+<div class="d-flex align-items-center gap-3 mb-3">
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary">← Mis Envíos</a>
+    <h1 class="mb-0">Crear Nuevo Envío</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <div class="mb-3">
+                            <label asp-for="ClienteId" class="form-label fw-bold">Cliente</label>
+                            <select asp-for="ClienteId" class="form-select" asp-items="ViewBag.ClienteId">
+                                <option value="">— Seleccionar cliente —</option>
+                            </select>
+                            <span asp-validation-for="ClienteId" class="text-danger"></span>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label asp-for="DestinatarioId" class="form-label fw-bold">📥 Destinatario</label>
+                        <select asp-for="DestinatarioId" class="form-select" asp-items="ViewBag.DestinatarioId">
+                            <option value="">— Seleccionar destinatario —</option>
+                        </select>
+                        <span asp-validation-for="DestinatarioId" class="text-danger"></span>
+                        @if (!User.IsInRole("Administrador"))
+                        {
+                            <div class="mt-1">
+                                <small class="text-muted">¿No aparece? <a asp-controller="Destinatarios" asp-action="Create">Agrega un destinatario aquí</a></small>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="SucursalId" class="form-label fw-bold">🏢 Sucursal de Origen</label>
+                        <select asp-for="SucursalId" class="form-select" asp-items="ViewBag.SucursalId">
+                            <option value="">— Seleccionar sucursal —</option>
+                        </select>
+                        <span asp-validation-for="SucursalId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaEnvio" class="form-label fw-bold">📅 Fecha de Envío</label>
+                            <input asp-for="FechaEnvio" class="form-control" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+                            <span asp-validation-for="FechaEnvio" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaEntrega" class="form-label fw-bold">📅 Fecha Estimada de Entrega</label>
+                            <input asp-for="FechaEntrega" class="form-control" type="date"/>
+                            <span asp-validation-for="FechaEntrega" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Costo" class="form-label fw-bold">💵 Costo del Envío ($)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Costo" class="form-control" type="number" step="0.01" min="0" placeholder="0.00"/>
+                        </div>
+                        <span asp-validation-for="Costo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Observaciones" class="form-label fw-bold">📝 Observaciones (opcional)</label>
+                        <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Instrucciones especiales, referencias de entrega..."></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">🚀 Crear Envío</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm bg-light">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">📌 Recuerda</h5>
+                <ul class="list-unstyled small text-muted" style="line-height:1.8">
+                    <li>✅ Tu envío inicia en estado <strong>Pendiente</strong></li>
+                    <li>✅ Puedes editarlo mientras esté pendiente</li>
+                    <li>✅ Se genera un <strong>número de seguimiento</strong> automáticamente</li>
+                    <li>✅ Se crea un <strong>cobro pendiente</strong> por el costo indicado</li>
+                    <li>⚠️ Una vez recolectado, ya no podrás modificarlo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

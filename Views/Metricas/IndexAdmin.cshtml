@@ -1,0 +1,137 @@
+@{
+    ViewData["Title"] = "Panel Administrativo — Métricas";
+}
+
+<h1>📊 Panel Administrativo</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #4F46E5">
+            <div class="metric-icon">📬</div>
+            <div class="metric-value">@ViewBag.TotalEnvios</div>
+            <div class="metric-label">Total de Envíos</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #059669">
+            <div class="metric-icon">💰</div>
+            <div class="metric-value">$@(((decimal)ViewBag.IngresoTotal).ToString("0.00"))</div>
+            <div class="metric-label">Ingresos Cobrados</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #7C3AED">
+            <div class="metric-icon">🤝</div>
+            <div class="metric-value">$@(((decimal)ViewBag.ComisionTotal).ToString("0.00"))</div>
+            <div class="metric-label">Comisiones Totales</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #F59E0B">
+            <div class="metric-icon">🕐</div>
+            <div class="metric-value">@ViewBag.PagosPendientes</div>
+            <div class="metric-label">Cobros Pendientes</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #F59E0B">
+            <div class="metric-icon">⏳</div>
+            <div class="metric-value">@ViewBag.EnviosPendientes</div>
+            <div class="metric-label">Envíos Pendientes</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #3B82F6">
+            <div class="metric-icon">🚚</div>
+            <div class="metric-value">@ViewBag.EnviosEnTransito</div>
+            <div class="metric-label">En Tránsito</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #10B981">
+            <div class="metric-icon">✅</div>
+            <div class="metric-value">@ViewBag.EnviosEntregados</div>
+            <div class="metric-label">Entregados</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="metric-card" style="border-top:4px solid #6B7280">
+            <div class="metric-icon">👤</div>
+            <div class="metric-value">@ViewBag.TotalClientes</div>
+            <div class="metric-label">Clientes Registrados</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- Top sucursales -->
+    @if (ViewBag.TopSucursales != null)
+    {
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent fw-bold">🏢 Top Sucursales</div>
+                <div class="card-body">
+                    @foreach (var s in ViewBag.TopSucursales)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>@s.Sucursal</span>
+                            <span class="badge bg-primary rounded-pill">@s.Total envíos</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Por estado -->
+    @if (ViewBag.PorEstado != null)
+    {
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent fw-bold">📊 Envíos por Estado</div>
+                <div class="card-body">
+                    @foreach (var e in ViewBag.PorEstado)
+                    {
+                        var color = ((string)e.Estado) switch
+                        {
+                            "Pendiente"    => "#F59E0B",
+                            "En Tránsito"  => "#3B82F6",
+                            "Entregado"    => "#10B981",
+                            "Cancelado"    => "#EF4444",
+                            "Recolectado"  => "#06B6D4",
+                            _              => "#6B7280"
+                        };
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>
+                                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:@color;margin-right:6px"></span>
+                                @e.Estado
+                            </span>
+                            <strong>@e.Total</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="mt-3 d-flex gap-2">
+    <a asp-controller="Envios" asp-action="Index" class="btn btn-outline-primary">Ver Todos los Envíos</a>
+    <a asp-controller="Sucursales" asp-action="Index" class="btn btn-outline-secondary">Gestionar Sucursales</a>
+</div>
+
+<style>
+    .metric-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+    .metric-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .metric-value { font-size: 1.8rem; font-weight: 800; color: #1F2937; }
+    .metric-label { font-size: 0.85rem; color: #6B7280; font-weight: 500; }
+</style>

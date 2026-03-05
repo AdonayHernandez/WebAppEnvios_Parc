@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using WebAppEnvios.Models;
-using WebAppEnvios.Models.WebAppEnvios.Models;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebAppEnvios.Models
 {
@@ -25,7 +25,13 @@ namespace WebAppEnvios.Models
 
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
 
+        // Identity
+        public string? UserId { get; set; }
+        [ForeignKey("UserId")]
+        public IdentityUser? User { get; set; }
+
         // Relación
-        public ICollection<Envio> Envios { get; set; }
+        public ICollection<Envio>? Envios { get; set; }
+        public ICollection<Destinatario>? Destinatarios { get; set; }
     }
 }

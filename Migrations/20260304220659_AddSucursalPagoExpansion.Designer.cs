@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAppEnvios.Data;
 
@@ -11,9 +12,11 @@ using WebAppEnvios.Data;
 namespace WebAppEnvios.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260304220659_AddSucursalPagoExpansion")]
+    partial class AddSucursalPagoExpansion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -418,44 +421,6 @@ namespace WebAppEnvios.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebAppEnvios.Models.HistorialEstado", b =>
-                {
-                    b.Property<int>("HistorialId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistorialId"));
-
-                    b.Property<string>("CambiadoPor")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("EnvioId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EstadoAnterior")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("EstadoNuevo")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("FechaCambio")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Observaciones")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("HistorialId");
-
-                    b.HasIndex("EnvioId");
-
-                    b.ToTable("HistorialEstados");
-                });
-
             modelBuilder.Entity("WebAppEnvios.Models.Pago", b =>
                 {
                     b.Property<int>("PagoId")
@@ -797,17 +762,6 @@ namespace WebAppEnvios.Migrations
                     b.Navigation("Sucursal");
                 });
 
-            modelBuilder.Entity("WebAppEnvios.Models.HistorialEstado", b =>
-                {
-                    b.HasOne("WebAppEnvios.Models.Envio", "Envio")
-                        .WithMany("HistorialEstados")
-                        .HasForeignKey("EnvioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Envio");
-                });
-
             modelBuilder.Entity("WebAppEnvios.Models.Pago", b =>
                 {
                     b.HasOne("WebAppEnvios.Models.Envio", "Envio")
@@ -844,8 +798,6 @@ namespace WebAppEnvios.Migrations
 
             modelBuilder.Entity("WebAppEnvios.Models.Envio", b =>
                 {
-                    b.Navigation("HistorialEstados");
-
                     b.Navigation("Pagos");
 
                     b.Navigation("Paquetes");

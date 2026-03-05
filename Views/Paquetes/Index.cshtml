@@ -1,0 +1,41 @@
+@model IEnumerable<WebAppEnvios.Models.Paquete>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Peso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Envio)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Peso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Envio.EnvioId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PaqueteId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PaqueteId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PaqueteId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
